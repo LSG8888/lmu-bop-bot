@@ -1,5 +1,3 @@
-.github/workflows/weekly.yml
-
 name: Wöchentlicher BoP Export
 
 on:
