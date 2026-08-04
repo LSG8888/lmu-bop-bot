@@ -1,11 +1,9 @@
 import os
 import requests
 
-# Webhook-URL aus den GitHub Secrets laden
 WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
-# Alle Strecken aus deinen Screenshots
-# Ersetze die Zahlen auf der rechten Seite mit deinen echten Thread-IDs!
+# Zuordnung der Strecken zu Ihren Discord Thread-IDs
 STRECKEN_THREADS = {
     "Bahrain": "1532475398175330517",
     "Le Mans": "1532476680617070612",
@@ -27,33 +25,41 @@ STRECKEN_THREADS = {
 
 def send_bop_updates():
     if not WEBHOOK_URL:
-        print("Fehler: Keine Webhook-URL unter DISCORD_WEBHOOK_URL gefunden!")
+        print("Fehler: keine DISCORD_WEBHOOK_URL gefunden!")
         return
 
-    print("Starte wöchentliches BoP-Update...")
-
     for track_name, thread_id in STRECKEN_THREADS.items():
-        if thread_id == "HIER_THREAD_ID_EINTRAGEN":
-            print(f"Übersprungen: {track_name} (Keine Thread-ID eingetragen)")
-            continue
-
-        # Nachrichten-Inhalt
+        # Exaktes Nachbauen der Bot-Nachricht als Discord Embed
         payload = {
-            "content": (
-                f"🏎️ **Wöchentliches BoP & Pace Update – {track_name}**\n\n"
-                f"Die aktuellen Rundenzeiten, Car-Strength und BoP-Einstufungen für **{track_name}** findest du direkt hier:\n"
-                f"🔗 https://bop-tourism.com/"
-            )
+            "username": "LMU Bop Tourist",
+            "avatar_url": "https://bop-tourism.com/favicon.ico",
+            "embeds": [
+                {
+                    "title": f"BoP Rankings – GT3 @ {track_name}",
+                    "url": "https://bop-tourism.com/",
+                    "color": 14101832,  # Roter Seitenbalken wie im Screenshot
+                    "description": (
+                        f"Die aktuellen Rundenzeiten, Car-Strength und BoP-Einstufungen für **{track_name}** wurden aktualisiert.\n\n"
+                        f"📊 **Klicke hier für die vollständige Rangliste & Live-Zeiten:**\n"
+                        f"🔗 **[bop-tourism.com ({track_name})](https://bop-tourism.com/)**\n\n"
+                        f"**Discount codes**\n"
+                        f"Hymo – 10% off with code BOP (enter at checkout)\n"
+                        f"GoSetups – 10% off with code BOPTOURISM (auto-applied)"
+                    ),
+                    "footer": {
+                        "text": "Version: V1.4.0.1 • Updated daily • ⚠️ Setup-pack not up-to-date for marked entries"
+                    }
+                }
+            ]
         }
 
-        # Sendet die Nachricht direkt in den passenden Forum-Thread
         target_url = f"{WEBHOOK_URL}?thread_id={thread_id}"
         response = requests.post(target_url, json=payload)
 
         if response.status_code in [200, 204]:
             print(f"✅ Erfolgreich gesendet an: {track_name}")
         else:
-            print(f"❌ Fehler bei {track_name}: Status-Code {response.status_code}")
+            print(f"❌ Fehler bei {track_name}: Status {response.status_code}")
 
 if __name__ == "__main__":
     send_bop_updates()
