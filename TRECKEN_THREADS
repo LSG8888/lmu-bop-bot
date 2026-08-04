@@ -2,7 +2,7 @@ import os
 import requests
 
 # Webhook-URL aus den GitHub Secrets laden
-WEBHOOK_URL = os.environ.get("https://discord.com/api/webhooks/1534171642995933204/eBNlUGBP3Xmr80FvKaD6gMfdNLxwJRLqFR9q1XG-mR8Rfx6vnIRaUFu7mJIqap4fp0Yw")
+WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
 # Alle Strecken aus deinen Screenshots
 # Ersetze die Zahlen auf der rechten Seite mit deinen echten Thread-IDs!
