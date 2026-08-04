@@ -4,7 +4,7 @@ import requests
 
 WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 
-# Zuordnung: Key/Name -> (Thread-ID, URL-Slug)
+# Zuordnung der 16 Strecken zu ihren Discord Thread-IDs
 STRECKEN_DATA = {
     "Bahrain": ("1532475398175330517", "bahrain"),
     "Barcelona": ("1532475831337619536", "barcelona"),
@@ -24,10 +24,26 @@ STRECKEN_DATA = {
     "Laguna Seca": ("1532478315066036284", "laguna-seca")
 }
 
-# Fahrzeugklassen und deren URL-Pfade / Farben
+# Fahrzeugklassen mit eigener Farbe und URL-Slug
 CLASSES = [
-    {"name": "GT3", "slug": "gt3", "color": 14101832},        # Rot
-    {"name": "Hypercar", "slug": "hypercar", "color": 3447003} # Blau
+    {
+        "name": "Hypercar", 
+        "slug": "hypercar", 
+        "color": 15158332,  # Rot
+        "emoji": "🔴"
+    },
+    {
+        "name": "GT3", 
+        "slug": "gt3", 
+        "color": 3066993,   # Grün
+        "emoji": "🟢"
+    },
+    {
+        "name": "LMP3", 
+        "slug": "lmp3",  # Falls auf der Website lmp2 genutzt wird, hier zu 'lmp2' ändern
+        "color": 10181014,  # Lila
+        "emoji": "🟣"
+    }
 ]
 
 def send_bop_updates():
@@ -40,6 +56,7 @@ def send_bop_updates():
             class_name = car_class["name"]
             class_slug = car_class["slug"]
             embed_color = car_class["color"]
+            emoji = car_class["emoji"]
 
             track_url = f"https://bop-tourism.com/bop/{class_slug}/{track_slug}"
 
@@ -48,7 +65,7 @@ def send_bop_updates():
                 "avatar_url": "https://bop-tourism.com/favicon.ico",
                 "embeds": [
                     {
-                        "title": f"BoP Rankings – {class_name} @ {track_name}",
+                        "title": f"{emoji} BoP Rankings – {class_name} @ {track_name}",
                         "url": track_url,
                         "color": embed_color,
                         "description": (
@@ -70,11 +87,11 @@ def send_bop_updates():
             response = requests.post(target_url, json=payload)
 
             if response.status_code in [200, 204]:
-                print(f"✅ Erfolgreich gesendet: {class_name} @ {track_name}")
+                print(f"✅ Erfolgreich: {class_name} ({track_name})")
             else:
-                print(f"❌ Fehler bei {class_name} @ {track_name}: Status {response.status_code} - {response.text}")
+                print(f"❌ Fehler bei {class_name} ({track_name}): Status {response.status_code}")
 
-            # Kurze Pause für Discord Rate Limits
+            # 1.5 Sekunden Pause, um Discord Rate Limits zu vermeiden
             time.sleep(1.5)
 
 if __name__ == "__main__":
